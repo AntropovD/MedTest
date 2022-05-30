@@ -1,11 +1,8 @@
 <resources>
     <string name="app_name">MedTest</string>
 
-    <string name="start_quiz">Start Quiz</string>
-    <string name="rule">Rule</string>
-    <string name="history">History</string>
-    <string name="menu">Menu</string>
-    <string name="edit_password">Edit Password</string>
-    <string name="logout">Logout</string>
+    <string name="title">УГМУ ГИА Педиатрия</string>
+    <string name="practice">Тренировка</string>
+    <string name="exam">Экзамен</string>
 
 </resources>
