@@ -1,4 +1,4 @@
-package com.dantropov.medtest.dagger.module
+package com.dantropov.medtest.di
 
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Cicerone.Companion.create
@@ -6,21 +6,21 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
 @Module
+@InstallIn(ActivityComponent::class)
 class NavigationModule {
 
     private val cicerone: Cicerone<Router> = create()
 
     @Provides
-    @Singleton
     fun provideRouter(): Router {
         return cicerone.router
     }
 
     @Provides
-    @Singleton
     fun provideNavigatorHolder(): NavigatorHolder {
         return cicerone.getNavigatorHolder()
     }

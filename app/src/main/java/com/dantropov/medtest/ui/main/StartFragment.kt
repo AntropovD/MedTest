@@ -4,20 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dantropov.medtest.MedTestApp
 import com.dantropov.medtest.databinding.FragmentStartBinding
 import com.dantropov.medtest.mvp.main.StartPresenter
 import com.dantropov.medtest.mvp.main.StartView
+import com.dantropov.medtest.ui.common.ViewBindingHolder
 import com.github.terrakok.cicerone.Router
+import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class StartFragment : MvpAppCompatFragment(), StartView {
 
-    private var _binding: FragmentStartBinding? = null
-    private val binding get() = _binding!!
+    private val bindingHolder = ViewBindingHolder<FragmentStartBinding>()
+    private val binding get() = bindingHolder.binding
 
     @Inject
     lateinit var router: Router
@@ -28,23 +30,12 @@ class StartFragment : MvpAppCompatFragment(), StartView {
     @ProvidePresenter
     fun createPresenter() = StartPresenter(router)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        MedTestApp.INSTANCE.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentStartBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    ): View = bindingHolder.createView(viewLifecycleOwner) {
+        FragmentStartBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

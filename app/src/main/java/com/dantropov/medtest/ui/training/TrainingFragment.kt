@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dantropov.medtest.MedTestApp
+import com.dantropov.medtest.databinding.FragmentStartBinding
 import com.dantropov.medtest.databinding.FragmentTrainingBinding
 import com.dantropov.medtest.mvp.training.TrainingPresenter
 import com.dantropov.medtest.mvp.training.TrainingView
 import com.dantropov.medtest.ui.common.BackButtonListener
+import com.dantropov.medtest.ui.common.ViewBindingHolder
 import com.github.terrakok.cicerone.Router
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -17,8 +19,8 @@ import javax.inject.Inject
 
 class TrainingFragment : MvpAppCompatFragment(), TrainingView, BackButtonListener {
 
-    private var _binding: FragmentTrainingBinding? = null
-    private val binding get() = _binding!!
+    private val bindingHolder = ViewBindingHolder<FragmentTrainingBinding>()
+    private val binding get() = bindingHolder.binding
 
     @Inject
     lateinit var router: Router
@@ -27,25 +29,14 @@ class TrainingFragment : MvpAppCompatFragment(), TrainingView, BackButtonListene
     lateinit var presenter: TrainingPresenter
 
     @ProvidePresenter
-    fun createPresenter2() = TrainingPresenter(router)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        MedTestApp.INSTANCE.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
-    }
+    fun createPresenter() = TrainingPresenter(router)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentTrainingBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    ): View = bindingHolder.createView(viewLifecycleOwner) {
+        FragmentTrainingBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

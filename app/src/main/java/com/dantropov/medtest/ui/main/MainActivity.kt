@@ -10,11 +10,13 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.dantropov.medtest.ui.common.BackButtonListener
 import com.dantropov.medtest.ui.common.ChainHolder
 import com.github.terrakok.cicerone.*
+import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatActivity
 import java.lang.ref.WeakReference
 import java.util.ArrayList
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : MvpAppCompatActivity(), ChainHolder {
 
     override val chain = ArrayList<WeakReference<Fragment>>()
@@ -32,7 +34,6 @@ class MainActivity : MvpAppCompatActivity(), ChainHolder {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MedTestApp.INSTANCE.appComponent.inject(this)
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
