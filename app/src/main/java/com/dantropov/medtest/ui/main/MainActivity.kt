@@ -1,20 +1,23 @@
 package com.dantropov.medtest.ui.main
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.dantropov.medtest.MedTestApp
 import com.dantropov.medtest.R
-import com.dantropov.medtest.Screens.Sample
+import com.dantropov.medtest.Screens.Start
 import com.dantropov.medtest.databinding.ActivityMainBinding
-import com.github.terrakok.cicerone.Command
-import com.github.terrakok.cicerone.Navigator
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.dantropov.medtest.ui.common.BackButtonListener
+import com.dantropov.medtest.ui.common.ChainHolder
+import com.github.terrakok.cicerone.*
 import moxy.MvpAppCompatActivity
+import java.lang.ref.WeakReference
+import java.util.ArrayList
 import javax.inject.Inject
 
-class MainActivity : MvpAppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), ChainHolder {
+
+    override val chain = ArrayList<WeakReference<Fragment>>()
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
@@ -37,7 +40,7 @@ class MainActivity : MvpAppCompatActivity() {
         setContentView(view)
 
         if (savedInstanceState == null) {
-            navigator.applyCommands(arrayOf<Command>(Replace(Sample(1))))
+            navigator.applyCommands(arrayOf<Command>(Forward(Start())))
         }
     }
 
