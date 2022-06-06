@@ -12,11 +12,13 @@ import com.dantropov.medtest.mvp.training.TrainingView
 import com.dantropov.medtest.ui.common.BackButtonListener
 import com.dantropov.medtest.ui.common.ViewBindingHolder
 import com.github.terrakok.cicerone.Router
+import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class TrainingFragment : MvpAppCompatFragment(), TrainingView, BackButtonListener {
 
     private val bindingHolder = ViewBindingHolder<FragmentTrainingBinding>()
