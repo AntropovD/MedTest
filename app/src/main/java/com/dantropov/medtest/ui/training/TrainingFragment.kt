@@ -4,34 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dantropov.medtest.MedTestApp
-import com.dantropov.medtest.databinding.FragmentStartBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.dantropov.medtest.databinding.FragmentTrainingBinding
-import com.dantropov.medtest.mvp.training.TrainingPresenter
-import com.dantropov.medtest.mvp.training.TrainingView
-import com.dantropov.medtest.ui.common.BackButtonListener
-import com.dantropov.medtest.ui.common.ViewBindingHolder
-import com.github.terrakok.cicerone.Router
+import com.dantropov.medtest.ui.base.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class TrainingFragment : MvpAppCompatFragment(), TrainingView, BackButtonListener {
+class TrainingFragment : Fragment() {
 
     private val bindingHolder = ViewBindingHolder<FragmentTrainingBinding>()
     private val binding get() = bindingHolder.binding
 
-    @Inject
-    lateinit var router: Router
-
-    @InjectPresenter
-    lateinit var presenter: TrainingPresenter
-
-    @ProvidePresenter
-    fun createPresenter() = TrainingPresenter(router)
+    val viewModel: TrainingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,19 +28,5 @@ class TrainingFragment : MvpAppCompatFragment(), TrainingView, BackButtonListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return true
-    }
-
-    override fun setTitle(text: String) {
-    }
-
-    override fun openBrowser(url: String) {
-    }
-
-    companion object {
-        fun getNewInstance(): TrainingFragment = TrainingFragment()
     }
 }

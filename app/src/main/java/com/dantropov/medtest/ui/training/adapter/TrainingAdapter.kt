@@ -1,4 +1,4 @@
-package com.dantropov.medtest.ui.training
+package com.dantropov.medtest.ui.training.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

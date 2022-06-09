@@ -46,28 +46,28 @@ ext {
     daggerVersion = "2.41"
     roomVersion = "2.4.2"
     workVersion = "2.7.1"
+    navVersion = "2.4.2"
 }
 
 dependencies {
     implementation "androidx.core:core-ktx:1.8.0"
+    implementation "androidx.activity:activity-ktx:1.4.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     // Support libraries
     implementation "androidx.appcompat:appcompat:$androidXVersion"
     implementation "com.google.android.material:material:$materialVersion"
 
-    //MVP Moxy
-    implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
-    implementation "com.github.moxy-community:moxy-ktx:$moxyVersion"
-    kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
-
-    //Cicerone
-    implementation("com.github.terrakok:cicerone:7.1")
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
 
     //DI
     implementation "com.google.dagger:hilt-android:$daggerVersion"
     kapt "com.google.dagger:hilt-compiler:$daggerVersion"
 
     //Room
+    implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
