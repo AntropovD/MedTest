@@ -5,14 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dantropov.medtest.databinding.ItemTrainingBinding
 
-class TrainingAdapter(var datalist: List<TrainingData>) : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
+class TrainingAdapter() : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
+
+    private var dataList: MutableList<TrainingLevelData> = mutableListOf()
 
     class ViewHolder(private val binding: ItemTrainingBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: TrainingData) {
+        fun bind(data: TrainingLevelData) {
             binding.title.text = formatTrainingSequence(data)
         }
 
-        private fun formatTrainingSequence(data: TrainingData): String {
+        private fun formatTrainingSequence(data: TrainingLevelData): String {
             return "${data.start} - ${data.end}"
         }
     }
@@ -23,10 +25,14 @@ class TrainingAdapter(var datalist: List<TrainingData>) : RecyclerView.Adapter<T
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(datalist[position])
+        holder.bind(dataList[position])
     }
 
     override fun getItemCount(): Int {
-        return datalist.size
+        return dataList.size
+    }
+
+    fun submitData(trainingLevels: List<TrainingLevelData>) {
+        dataList = trainingLevels.toMutableList()
     }
 }

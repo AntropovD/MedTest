@@ -17,5 +17,5 @@ interface MedQuizDao {
     suspend fun getQuestion(id: Int): MedQuiz
 
     @Query("SELECT COUNT(*) FROM medquiz")
-    suspend fun getQuizCount(): Int
+    suspend fun getQuestionsCount(): Int
 }
