@@ -6,4 +6,12 @@
     <color name="edit_text_bg">#F2F3F7</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="colorPrimary">#3C0072</color>
+    <color name="colorPrimaryDark">#300B51</color>
+    <color name="colorAccent">#FF006E</color>
+    <color name="colorBackground">#FFC4DD</color>
+
+    <color name="colorCorrect">#4CAF50</color>
+    <color name="colorWrong">#F44336</color>
+
 </resources>

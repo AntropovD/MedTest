@@ -13,9 +13,9 @@ interface MedQuizDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(medQuizList: List<MedQuiz>)
 
-    @Query("SELECT * FROM medQuiz WHERE id= :id")
+    @Query("SELECT * FROM MedQuiz WHERE id= :id")
     suspend fun getQuestion(id: Int): MedQuiz
 
-    @Query("SELECT COUNT(*) FROM medquiz")
+    @Query("SELECT COUNT(*) FROM MedQuiz")
     suspend fun getQuestionsCount(): Int
 }

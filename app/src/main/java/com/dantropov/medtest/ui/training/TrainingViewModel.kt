@@ -9,25 +9,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed class TrainingUiState {
+    data class Success(val trainingLevels: List<TrainingLevelData>) : TrainingUiState()
+    object Empty : TrainingUiState()
+}
 
 @HiltViewModel
 class TrainingViewModel @Inject constructor(
     private val medQuizRepository: MedQuizRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TrainingUiState(isLoading = true))
+    private val _uiState = MutableStateFlow<TrainingUiState>(TrainingUiState.Empty)
     val uiState: StateFlow<TrainingUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val count = medQuizRepository.getQuestionsCount()
-            val trainingLevels = (1..count).chunked(TRAINING_SIZE).map { TrainingLevelData(it.first(), it.last()) }
-            _uiState.update { currentUiState ->
-                currentUiState.copy(isLoading = false, trainingLevels = trainingLevels)
-            }
+            val trainingLevels = (1..count).chunked(TRAINING_SIZE)
+                .map { TrainingLevelData(it.first(), it.last()) }
+            _uiState.value = TrainingUiState.Success(trainingLevels)
         }
     }
 

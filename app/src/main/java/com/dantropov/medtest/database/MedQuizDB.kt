@@ -36,18 +36,24 @@ abstract class MedQuizDB : RoomDatabase() {
 
         private fun buildDatabase(context: Context): MedQuizDB {
             return Room.databaseBuilder(context, MedQuizDB::class.java, DATABASE_NAME)
-                .addCallback(
-                    object : RoomDatabase.Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            val request = OneTimeWorkRequestBuilder<MedicineDatabaseWorker>()
-                                .setInputData(workDataOf(KEY_FILENAME to PLANT_DATA_FILENAME))
-                                .build()
-                            WorkManager.getInstance(context).enqueue(request)
-                        }
-                    }
-                )
+                .createFromAsset("medicine.db")
                 .build()
         }
+
+//        private fun buildDatabase(context: Context): MedQuizDB {
+//            return Room.databaseBuilder(context, MedQuizDB::class.java, DATABASE_NAME)
+//                .addCallback(
+//                    object : RoomDatabase.Callback() {
+//                        override fun onCreate(db: SupportSQLiteDatabase) {
+//                            super.onCreate(db)
+//                            val request = OneTimeWorkRequestBuilder<MedicineDatabaseWorker>()
+//                                .setInputData(workDataOf(KEY_FILENAME to PLANT_DATA_FILENAME))
+//                                .build()
+//                            WorkManager.getInstance(context).enqueue(request)
+//                        }
+//                    }
+//                )
+//                .build()
+//        }
     }
 }

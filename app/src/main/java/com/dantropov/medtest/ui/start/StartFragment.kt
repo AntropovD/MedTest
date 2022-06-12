@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.dantropov.medtest.R
 import com.dantropov.medtest.databinding.FragmentStartBinding
-import com.dantropov.medtest.ui.base.ViewBindingHolder
+import com.dantropov.medtest.util.view.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,7 +31,7 @@ class StartFragment : Fragment() {
     }
 
     private fun navigateToTraining() {
-        findNavController().navigate(R.id.action_startFragment_to_trainingFragment)
+        findNavController().navigate(StartFragmentDirections.actionStartFragmentToTrainingFragment())
     }
 
     private fun navigateToExam() {

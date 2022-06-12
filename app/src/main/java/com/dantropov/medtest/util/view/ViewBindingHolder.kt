@@ -1,4 +1,4 @@
-package com.dantropov.medtest.ui.base
+package com.dantropov.medtest.util.view
 
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver

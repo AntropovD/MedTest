@@ -19,6 +19,31 @@
         android:id="@+id/trainingFragment"
         android:name="com.dantropov.medtest.ui.training.TrainingFragment"
         android:label="TrainingFragment"
-        tools:layout="@layout/fragment_training" />
+        tools:layout="@layout/fragment_training">
+        <action
+            android:id="@+id/action_trainingFragment_to_quizFragment"
+            app:destination="@id/quizFragment">
+            <argument
+                android:name="quizArg"
+                app:argType="com.dantropov.medtest.ui.quiz.QuizLevelData" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.dantropov.medtest.ui.quiz.QuizFragment"
+        android:label="QuizFragment"
+        tools:layout="@layout/fragment_quiz">
+        <argument
+            android:name="quizArg"
+            app:argType="com.dantropov.medtest.ui.quiz.QuizLevelData" />
+        <action
+            android:id="@+id/action_quizFragment_self"
+            app:destination="@id/quizFragment">
+            <argument
+                android:name="quizArg"
+                app:argType="com.dantropov.medtest.ui.quiz.QuizLevelData" />
+        </action>
+    </fragment>
 
 </navigation>
