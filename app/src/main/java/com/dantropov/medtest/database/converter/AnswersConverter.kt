@@ -6,7 +6,7 @@ import com.google.gson.Gson
 
 class AnswersConverter {
     @TypeConverter
-    fun listToJson(value: List<Answer>) = Gson().toJson(value)
+    fun listToJson(value: List<Answer>): String = Gson().toJson(value)
 
     @TypeConverter
     fun jsonToList(value: String) = Gson().fromJson(value, Array<Answer>::class.java).toList()

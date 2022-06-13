@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.database.model.MedQuiz
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +28,7 @@ class QuizViewModel @Inject constructor(
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
     fun init(data: QuizLevelData) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             val question = medQuizRepository.getQuestion(data.currentQuestionId)
             _uiState.value = QuizUiState.Ready(question)
         }
