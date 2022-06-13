@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface MedQuizDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(medQuizList: List<MedQuiz>)
+    suspend fun insertAll(medQuizList: List<MedQuiz>)
 
     @Query("SELECT * FROM MedQuiz WHERE id= :id")
     suspend fun getQuestion(id: Int): MedQuiz

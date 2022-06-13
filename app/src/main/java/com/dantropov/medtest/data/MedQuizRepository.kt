@@ -2,6 +2,8 @@ package com.dantropov.medtest.data
 
 import com.dantropov.medtest.database.dao.MedQuizDao
 import com.dantropov.medtest.database.model.MedQuiz
+import com.dantropov.medtest.ui.training.TrainingViewModel
+import com.dantropov.medtest.ui.training.adapter.TrainingLevelData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,7 +14,13 @@ class MedQuizRepository @Inject constructor(private val medQuizDao: MedQuizDao) 
         return medQuizDao.getQuestion(id)
     }
 
-    suspend fun getQuestionsCount() : Int {
+    suspend fun getTrainingLevels(): List<TrainingLevelData> {
+        val count = getQuestionsCount()
+        return (1..count).chunked(TrainingViewModel.TRAINING_SIZE)
+            .map { TrainingLevelData(it.first(), it.last()) }
+    }
+
+    suspend fun getQuestionsCount(): Int {
         return medQuizDao.getQuestionsCount()
     }
 }

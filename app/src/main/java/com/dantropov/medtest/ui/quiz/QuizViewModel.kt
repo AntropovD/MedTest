@@ -29,7 +29,7 @@ class QuizViewModel @Inject constructor(
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
     fun init(data: QuizLevelData) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             val question = medQuizRepository.getQuestion(data.currentQuestionId)
             _uiState.value = QuizUiState.Ready(question)
         }

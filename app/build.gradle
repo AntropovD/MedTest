@@ -45,7 +45,7 @@ ext {
     androidXVersion = "1.4.2"
     materialVersion = "1.6.1"
     moxyVersion = "2.2.2"
-    daggerVersion = "2.41"
+    daggerVersion = "2.42"
     roomVersion = "2.4.2"
     workVersion = "2.7.1"
     navVersion = "2.4.2"

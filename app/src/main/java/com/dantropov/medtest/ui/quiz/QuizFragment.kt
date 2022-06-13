@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dantropov.medtest.R
@@ -18,8 +20,8 @@ import com.dantropov.medtest.databinding.FragmentQuizBinding
 import com.dantropov.medtest.util.animation.TextViewAnimation
 import com.dantropov.medtest.util.view.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class QuizFragment : Fragment() {
@@ -52,15 +54,17 @@ class QuizFragment : Fragment() {
         viewModel.init(args.quizArg)
         setupUi()
 
-        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            viewModel.uiState.collectLatest { uiState ->
-                when (uiState) {
-                    is QuizUiState.Ready -> setupQuiz(uiState.medQuiz)
-                    is QuizUiState.CorrectAnswer -> chooseCorrectAnswer(uiState.correctOrder)
-                    is QuizUiState.WrongAnswer -> chooseWrongAnswer(uiState.wrongOrder, uiState.correctOrder)
-                    is QuizUiState.NavigateToNextQuestion -> navigateToNextQuestion(uiState.quizLevelData)
-                    is QuizUiState.Finish -> showFinishDialog(uiState.quizLevelData)
-                    else -> {}
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is QuizUiState.Ready -> setupQuiz(uiState.medQuiz)
+                        is QuizUiState.CorrectAnswer -> chooseCorrectAnswer(uiState.correctOrder)
+                        is QuizUiState.WrongAnswer -> chooseWrongAnswer(uiState.wrongOrder, uiState.correctOrder)
+                        is QuizUiState.NavigateToNextQuestion -> navigateToNextQuestion(uiState.quizLevelData)
+                        is QuizUiState.Finish -> showFinishDialog(uiState.quizLevelData)
+                        else -> {}
+                    }
                 }
             }
         }
@@ -89,11 +93,11 @@ class QuizFragment : Fragment() {
     }
 
     private fun setupUi() {
-        binding.tvOption1.setOnClickListener(parentClickListener { viewModel.itemChoose(0)  })
-        binding.tvOption2.setOnClickListener(parentClickListener { viewModel.itemChoose(1)  })
-        binding.tvOption3.setOnClickListener(parentClickListener { viewModel.itemChoose(2)  })
-        binding.tvOption4.setOnClickListener(parentClickListener { viewModel.itemChoose(3)  })
-        binding.tvOption5.setOnClickListener(parentClickListener { viewModel.itemChoose(4)  })
+        binding.tvOption1.setOnClickListener(parentClickListener { viewModel.itemChoose(0) })
+        binding.tvOption2.setOnClickListener(parentClickListener { viewModel.itemChoose(1) })
+        binding.tvOption3.setOnClickListener(parentClickListener { viewModel.itemChoose(2) })
+        binding.tvOption4.setOnClickListener(parentClickListener { viewModel.itemChoose(3) })
+        binding.tvOption5.setOnClickListener(parentClickListener { viewModel.itemChoose(4) })
         binding.root.setOnTouchListener { v, event ->
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
@@ -104,7 +108,7 @@ class QuizFragment : Fragment() {
             }
             v.onTouchEvent(event)
         }
-        binding.root.setOnClickListener{
+        binding.root.setOnClickListener {
             viewModel.nextQuiz(args.quizArg)
         }
     }

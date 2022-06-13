@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.dantropov.medtest.databinding.FragmentTrainingBinding
-import com.dantropov.medtest.util.view.ViewBindingHolder
 import com.dantropov.medtest.ui.training.adapter.TrainingAdapter
+import com.dantropov.medtest.util.view.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TrainingFragment : Fragment() {
@@ -33,13 +36,15 @@ class TrainingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.plantList.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            viewModel.uiState.collectLatest { uiState ->
-                when (uiState) {
-                    is TrainingUiState.Success -> {
-                        adapter.submitData(uiState.trainingLevels)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is TrainingUiState.Ready -> {
+                            adapter.submitData(uiState.trainingLevels)
+                        }
+                        else -> {}
                     }
-                    else -> {}
                 }
             }
         }

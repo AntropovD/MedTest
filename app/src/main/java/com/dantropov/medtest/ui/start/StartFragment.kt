@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.dantropov.medtest.databinding.FragmentStartBinding
 import com.dantropov.medtest.util.view.ViewBindingHolder
@@ -15,6 +16,7 @@ class StartFragment : Fragment() {
 
     private val bindingHolder = ViewBindingHolder<FragmentStartBinding>()
     private val binding get() = bindingHolder.binding
+    private val viewModel: StartViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +30,7 @@ class StartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.cvTraining.setOnClickListener { navigateToTraining() }
         binding.cvExam.setOnClickListener { navigateToExam() }
+        viewModel.init()
     }
 
     private fun navigateToTraining() {
