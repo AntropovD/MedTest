@@ -11,6 +11,9 @@ data class QuizLevelData(
     val endQuestionId: Int = 0,
     val rightAnswersCount: Int = 0
 ) : Parcelable {
+    val questionsCount get() = endQuestionId - startQuestionId + 1
+    val questionPosition get() = currentQuestionId - startQuestionId + 1
+
     companion object {
         fun createFromTrainingLevelData(data: TrainingLevelData): QuizLevelData {
             return QuizLevelData(

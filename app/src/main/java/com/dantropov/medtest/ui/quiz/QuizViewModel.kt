@@ -77,4 +77,9 @@ class QuizViewModel @Inject constructor(
             _uiState.value = QuizUiState.NavigateToNextQuestion(newLevelData)
         }
     }
+
+    fun finishQuiz() {
+
+
+    }
 }

@@ -17,11 +17,12 @@ import androidx.navigation.fragment.navArgs
 import com.dantropov.medtest.R
 import com.dantropov.medtest.database.model.MedQuiz
 import com.dantropov.medtest.databinding.FragmentQuizBinding
+import com.dantropov.medtest.ui.start.StartFragmentDirections
 import com.dantropov.medtest.util.animation.TextViewAnimation
 import com.dantropov.medtest.util.view.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuizFragment : Fragment() {
@@ -30,6 +31,7 @@ class QuizFragment : Fragment() {
     private val binding get() = bindingHolder.binding
     private val viewModel: QuizViewModel by viewModels()
     private val args: QuizFragmentArgs by navArgs()
+
     private val optionsList: List<TextView> by lazy {
         listOf(
             binding.tvOption1,
@@ -111,6 +113,15 @@ class QuizFragment : Fragment() {
         binding.root.setOnClickListener {
             viewModel.nextQuiz(args.quizArg)
         }
+        setupProgressBar()
+    }
+
+    private fun setupProgressBar() {
+        val quizData = args.quizArg
+        binding.progressBar.min = 1
+        binding.progressBar.max = quizData.questionsCount
+        binding.progressBar.setProgress(quizData.questionPosition, true)
+        binding.tvProgress.text = "${quizData.questionPosition}/${quizData.questionsCount} "
     }
 
     private fun navigateToNextQuestion(quizLevelData: QuizLevelData) {
@@ -120,10 +131,17 @@ class QuizFragment : Fragment() {
     private fun showFinishDialog(data: QuizLevelData) {
         val builder = AlertDialog.Builder(requireContext()).apply {
             setTitle("Congratulations!")
-            setMessage("You finished current training: ${data.rightAnswersCount} / ${data.endQuestionId - data.startQuestionId} correct answers")
-            setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+            setMessage("You finished current training: ${data.rightAnswersCount} / ${data.questionsCount} correct answers")
+            setPositiveButton(android.R.string.ok) { dialog, _ ->
+                finishQuiz()
+                dialog.dismiss()
+            }
         }
         builder.show()
+    }
+
+    private fun finishQuiz() {
+        findNavController().navigate(R.id.startFragment)
     }
 
     private fun parentClickListener(clickListener: () -> Unit): View.OnClickListener = View.OnClickListener { v ->
