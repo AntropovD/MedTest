@@ -74,7 +74,7 @@ val Typography = Typography(
     // Title Large - Montserrat 22/28 . 0px
     titleLarge = TextStyle(
         fontFamily = MontserratFontFamily,
-        fontWeight = FontWeight.W400,
+        fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,

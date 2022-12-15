@@ -2,7 +2,9 @@
     <string name="app_name">MedTest</string>
 
     <string name="title">ГИА Педиатрия</string>
+
     <string name="practice">Тренировка</string>
     <string name="exam">Экзамен</string>
+    <string name="stats">Статистика</string>
 
 </resources>

@@ -37,6 +37,7 @@ class StartFragment : Fragment() {
                             when (event) {
                                 StartEvent.NavigateToTraining -> viewModel.navigateToTraining()
                                 StartEvent.NavigateToExam -> viewModel.navigateToExam()
+                                StartEvent.NavigateToStats -> viewModel.navigateToStats()
                             }
                         }
                     )
@@ -44,11 +45,4 @@ class StartFragment : Fragment() {
             }
         }
     }
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        binding.cvTraining.setOnClickListener { navigateToTraining() }
-//        binding.cvExam.setOnClickListener { navigateToExam() }
-//        viewModel.init()
-//    }
-//
 }

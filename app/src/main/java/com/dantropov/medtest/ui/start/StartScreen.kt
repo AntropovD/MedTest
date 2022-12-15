@@ -22,8 +22,8 @@ import com.dantropov.medtest.R
 sealed class StartEvent {
     object NavigateToTraining : StartEvent()
     object NavigateToExam : StartEvent()
+    object NavigateToStats : StartEvent()
 }
-
 
 @Composable
 fun StartScreen(onEvent: (StartEvent) -> Unit) {
@@ -36,7 +36,10 @@ fun ScaffoldWithTopBar(onEvent: (StartEvent) -> Unit) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
-                Text(stringResource(id = R.string.title))
+                Text(
+                    stringResource(id = R.string.title),
+                    style = MaterialTheme.typography.titleLarge
+                )
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceTint,
@@ -62,6 +65,7 @@ fun StartContent(onEvent: (StartEvent) -> Unit) {
     Column {
         ProfileCardComposable(stringResource(id = R.string.practice)) { onEvent(StartEvent.NavigateToTraining) }
         ProfileCardComposable(stringResource(id = R.string.exam)) { onEvent(StartEvent.NavigateToExam) }
+        ProfileCardComposable(stringResource(id = R.string.stats)) { onEvent(StartEvent.NavigateToStats) }
     }
 }
 

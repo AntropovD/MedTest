@@ -32,4 +32,8 @@ class StartViewModel @Inject constructor(
     fun navigateToExam() {
         _navigateTo.value = Event(Screen.Exam)
     }
+
+    fun navigateToStats() {
+        //
+    }
 }
