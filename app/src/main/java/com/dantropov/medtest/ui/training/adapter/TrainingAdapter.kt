@@ -7,7 +7,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dantropov.medtest.databinding.ItemTrainingBinding
 import com.dantropov.medtest.ui.quiz.QuizLevelData
-import com.dantropov.medtest.ui.training.TrainingFragmentDirections
+//import com.dantropov.medtest.ui.training.TrainingFragmentDirections
 
 class TrainingAdapter : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
 
@@ -26,11 +26,11 @@ class TrainingAdapter : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
         }
 
         private fun navigateToQuiz(view: View, data: TrainingLevelData) {
-            view.findNavController().navigate(
-                TrainingFragmentDirections.actionTrainingFragmentToQuizFragment(
-                    QuizLevelData.createFromTrainingLevelData(data)
-                )
-            )
+//            view.findNavController().navigate(
+////                TrainingFragmentDirections.actionTrainingFragmentToQuizFragment(
+////                    QuizLevelData.createFromTrainingLevelData(data)
+////                )
+//            )
         }
     }
 

@@ -4,39 +4,51 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.dantropov.medtest.databinding.FragmentStartBinding
-import com.dantropov.medtest.util.view.ViewBindingHolder
+import com.dantropov.medtest.navigation.Screen
+import com.dantropov.medtest.navigation.navigate
+import com.dantropov.medtest.theme.MedTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StartFragment : Fragment() {
 
-    private val bindingHolder = ViewBindingHolder<FragmentStartBinding>()
-    private val binding get() = bindingHolder.binding
     private val viewModel: StartViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = bindingHolder.createView(viewLifecycleOwner) {
-        FragmentStartBinding.inflate(inflater, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.cvTraining.setOnClickListener { navigateToTraining() }
-        binding.cvExam.setOnClickListener { navigateToExam() }
+    ): View {
+        viewModel.navigateTo.observe(viewLifecycleOwner) { navigateToEvent ->
+            navigateToEvent.getContentIfNotHandled()?.let { navigateTo ->
+                navigate(navigateTo, Screen.Start)
+            }
+        }
         viewModel.init()
-    }
 
-    private fun navigateToTraining() {
-        findNavController().navigate(StartFragmentDirections.actionStartFragmentToTrainingFragment())
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MedTheme {
+                    StartScreen(
+                        onEvent = { event ->
+                            when (event) {
+                                StartEvent.NavigateToTraining -> viewModel.navigateToTraining()
+                                StartEvent.NavigateToExam -> viewModel.navigateToExam()
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
-
-    private fun navigateToExam() {
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        binding.cvTraining.setOnClickListener { navigateToTraining() }
+//        binding.cvExam.setOnClickListener { navigateToExam() }
+//        viewModel.init()
+//    }
+//
 }

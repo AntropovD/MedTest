@@ -17,7 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.dantropov.medtest.R
 import com.dantropov.medtest.database.model.MedQuiz
 import com.dantropov.medtest.databinding.FragmentQuizBinding
-import com.dantropov.medtest.ui.start.StartFragmentDirections
+//import com.dantropov.medtest.ui.start.StartFragmentDirections
 import com.dantropov.medtest.util.animation.TextViewAnimation
 import com.dantropov.medtest.util.view.ViewBindingHolder
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +30,7 @@ class QuizFragment : Fragment() {
     private val bindingHolder = ViewBindingHolder<FragmentQuizBinding>()
     private val binding get() = bindingHolder.binding
     private val viewModel: QuizViewModel by viewModels()
-    private val args: QuizFragmentArgs by navArgs()
+//    private val args: QuizFragmentArgs by navArgs()
 
     private val optionsList: List<TextView> by lazy {
         listOf(
@@ -53,7 +53,7 @@ class QuizFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.init(args.quizArg)
+//        viewModel.init(args.quizArg)
         setupUi()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -74,7 +74,7 @@ class QuizFragment : Fragment() {
 
     private fun chooseWrongAnswer(wrongOrder: Int, correctOrder: Int) {
         val tvWrongAnswer = optionsList.getOrNull(wrongOrder) ?: return
-        tvWrongAnswer.setBackgroundColor(requireContext().getColor(R.color.colorWrong))
+//        tvWrongAnswer.setBackgroundColor(requireContext().getColor(R.color.colorWrong))
         chooseCorrectAnswer(correctOrder)
     }
 
@@ -100,32 +100,32 @@ class QuizFragment : Fragment() {
         binding.tvOption3.setOnClickListener(parentClickListener { viewModel.itemChoose(2) })
         binding.tvOption4.setOnClickListener(parentClickListener { viewModel.itemChoose(3) })
         binding.tvOption5.setOnClickListener(parentClickListener { viewModel.itemChoose(4) })
-        binding.root.setOnTouchListener { v, event ->
-            when (event?.action) {
-                MotionEvent.ACTION_UP -> {
-                    viewModel.nextQuiz(args.quizArg)
-                    v.performClick()
-                }
-                else -> {}
-            }
-            v.onTouchEvent(event)
-        }
-        binding.root.setOnClickListener {
-            viewModel.nextQuiz(args.quizArg)
-        }
-        setupProgressBar()
+//        binding.root.setOnTouchListener { v, event ->
+//            when (event?.action) {
+//                MotionEvent.ACTION_UP -> {
+//                    viewModel.nextQuiz(args.quizArg)
+//                    v.performClick()
+//                }
+//                else -> {}
+//            }
+//            v.onTouchEvent(event)
+//        }
+//        binding.root.setOnClickListener {
+//            viewModel.nextQuiz(args.quizArg)
+//        }
+//        setupProgressBar()
     }
 
     private fun setupProgressBar() {
-        val quizData = args.quizArg
-        binding.progressBar.min = 1
-        binding.progressBar.max = quizData.questionsCount
-        binding.progressBar.setProgress(quizData.questionPosition, true)
-        binding.tvProgress.text = "${quizData.questionPosition}/${quizData.questionsCount} "
+//        val quizData = args.quizArg
+//        binding.progressBar.min = 1
+//        binding.progressBar.max = quizData.questionsCount
+//        binding.progressBar.setProgress(quizData.questionPosition, true)
+//        binding.tvProgress.text = "${quizData.questionPosition}/${quizData.questionsCount} "
     }
 
     private fun navigateToNextQuestion(quizLevelData: QuizLevelData) {
-        findNavController().navigate(QuizFragmentDirections.actionQuizFragmentSelf(quizLevelData))
+//        findNavController().navigate(QuizFragmentDirections.actionQuizFragmentSelf(quizLevelData))
     }
 
     private fun showFinishDialog(data: QuizLevelData) {
