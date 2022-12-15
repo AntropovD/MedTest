@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dantropov.medtest.R
 
 sealed class StartEvent {
@@ -26,19 +27,19 @@ sealed class StartEvent {
 
 @Composable
 fun StartScreen(onEvent: (StartEvent) -> Unit) {
-    ScaffoldWithTopBar()
+    ScaffoldWithTopBar(onEvent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldWithTopBar() {
+fun ScaffoldWithTopBar(onEvent: (StartEvent) -> Unit) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(stringResource(id = R.string.title))
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.surfaceTint,
                 titleContentColor = Color.White,
             ),
         )
@@ -48,25 +49,27 @@ fun ScaffoldWithTopBar() {
                 .padding(it)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            StartContent()
+            StartContent(onEvent)
         }
     })
 }
 
 @Composable
-fun StartContent() {
+fun StartContent(onEvent: (StartEvent) -> Unit) {
     Column {
-        ProfileCardComposable(stringResource(id = R.string.practice))
-        ProfileCardComposable(stringResource(id = R.string.exam))
+        ProfileCardComposable(stringResource(id = R.string.practice)) { onEvent(StartEvent.NavigateToTraining) }
+        ProfileCardComposable(stringResource(id = R.string.exam)) { onEvent(StartEvent.NavigateToExam) }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileCardComposable(stringResource: String) {
+fun ProfileCardComposable(title: String, onEventClick: () -> Unit) {
     Card(
+        onClick = onEventClick,
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp))
@@ -75,7 +78,7 @@ fun ProfileCardComposable(stringResource: String) {
     ) {
         Row(modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)) {
             ProfilePictureComposable()
-            ProfileContentComposable(stringResource)
+            ProfileContentComposable(title)
         }
     }
 }
@@ -83,14 +86,14 @@ fun ProfileCardComposable(stringResource: String) {
 @Composable
 fun ProfilePictureComposable() {
     Column(
-        modifier = Modifier.size(80.dp),
+        modifier = Modifier.size(120.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.quiz),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier.size(80.dp),
             contentDescription = "Profile picture holder"
         )
     }
@@ -104,7 +107,7 @@ fun ProfileContentComposable(stringResource: String) {
             .padding(start = 8.dp),
         verticalArrangement = Arrangement.aligned(Alignment.CenterVertically)
     ) {
-        Text(stringResource, fontWeight = FontWeight.Bold)
+        Text(stringResource, fontWeight = FontWeight.Bold, fontSize = 20.sp)
     }
 }
 
