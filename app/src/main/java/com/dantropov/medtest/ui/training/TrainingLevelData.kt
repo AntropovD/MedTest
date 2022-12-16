@@ -1,4 +1,4 @@
-package com.dantropov.medtest.ui.training.adapter
+package com.dantropov.medtest.ui.training
 
 data class TrainingLevelData(
     val start: Int,

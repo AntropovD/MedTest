@@ -3,7 +3,7 @@ package com.dantropov.medtest.data
 import com.dantropov.medtest.database.dao.MedQuizDao
 import com.dantropov.medtest.database.model.MedQuiz
 import com.dantropov.medtest.ui.training.TrainingViewModel
-import com.dantropov.medtest.ui.training.adapter.TrainingLevelData
+import com.dantropov.medtest.ui.training.TrainingLevelData
 import javax.inject.Inject
 import javax.inject.Singleton
 

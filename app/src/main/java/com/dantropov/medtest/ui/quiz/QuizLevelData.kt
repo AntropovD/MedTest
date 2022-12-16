@@ -1,7 +1,7 @@
 package com.dantropov.medtest.ui.quiz
 
 import android.os.Parcelable
-import com.dantropov.medtest.ui.training.adapter.TrainingLevelData
+import com.dantropov.medtest.ui.training.TrainingLevelData
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

@@ -3,10 +3,10 @@ package com.dantropov.medtest.ui.training.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dantropov.medtest.databinding.ItemTrainingBinding
-import com.dantropov.medtest.ui.quiz.QuizLevelData
+import com.dantropov.medtest.ui.training.TrainingLevelData
+
 //import com.dantropov.medtest.ui.training.TrainingFragmentDirections
 
 class TrainingAdapter : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
