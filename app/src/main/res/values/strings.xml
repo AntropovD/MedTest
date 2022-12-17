@@ -4,6 +4,7 @@
     <string name="title">ГИА Педиатрия</string>
 
     <string name="practice">Тренировка</string>
+    <string name="practice_description">Выберите список вопросов:</string>
     <string name="exam">Экзамен</string>
     <string name="stats">Статистика</string>
 
