@@ -115,23 +115,25 @@ fun TrainingsList(
 
 @Composable
 fun TrainingListItem(data: TrainingLevelData) {
-    Spacer(Modifier.height(16.dp))
-    Card(
-        modifier = Modifier
-            .height(40.dp)
-            .fillMaxWidth()
-            .background(Color.White),
-        shape = RoundedCornerShape(corner = CornerSize(8.dp))
-    ) {
-        Column(
-            Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
+    Column() {
+        Spacer(Modifier.height(16.dp))
+        Card(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth()
+                .background(Color.White),
+            shape = RoundedCornerShape(corner = CornerSize(8.dp))
         ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "${data.start} - ${data.end}",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Column(
+                Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "${data.start} - ${data.end}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }
