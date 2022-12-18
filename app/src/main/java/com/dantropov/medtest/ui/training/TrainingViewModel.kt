@@ -1,6 +1,10 @@
 package com.dantropov.medtest.ui.training
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.dantropov.medtest.compose.MedSavedStateHandle
 import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.ui.quiz.QuizLevelData
@@ -18,7 +22,7 @@ sealed class TrainingUiState {
 @HiltViewModel
 class TrainingViewModel @Inject constructor(
     private val medQuizRepository: MedQuizRepository,
-    private val state: SavedStateHandle
+    private val state: MedSavedStateHandle
 ) : ViewModel() {
 
     private val _navigateTo = MutableLiveData<Event<Screen>>()
@@ -31,13 +35,13 @@ class TrainingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val trainingLevels = medQuizRepository.getTrainingLevels()
-            delay(500)
+            delay(300)
             _uiState.value = TrainingUiState.Ready(trainingLevels)
         }
     }
 
     fun trainingLevelClick(trainingLevelData: TrainingLevelData) {
-        state["quizLevelData"] = QuizLevelData.createFromTrainingLevelData(trainingLevelData)
+        state.saveQuizData(QuizLevelData.createFromTrainingLevelData(trainingLevelData))
         _navigateTo.value = Event(Screen.Quiz)
     }
 

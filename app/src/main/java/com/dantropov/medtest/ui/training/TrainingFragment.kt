@@ -40,9 +40,6 @@ class TrainingFragment : Fragment() {
                             fadeIn() with fadeOut()
                         }
                     ) { targetState ->
-                        // It's important to use targetState and not state, as its critical to ensure
-                        // a successful lookup of all the incoming and outgoing content during
-                        // content transform.
                         when (targetState) {
                             is TrainingUiState.Ready -> ScaffoldWithTopBarReady(targetState) {
                                 viewModel.trainingLevelClick(it)

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dantropov.medtest.compose.base.BaseViewModel
 import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.util.Event
@@ -14,9 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StartViewModel @Inject constructor(
     private val medQuizRepository: MedQuizRepository
-) : ViewModel() {
-    private val _navigateTo = MutableLiveData<Event<Screen>>()
-    val navigateTo: LiveData<Event<Screen>> = _navigateTo
+) : BaseViewModel() {
 
     fun init() {
         // Need to prepopulate db
