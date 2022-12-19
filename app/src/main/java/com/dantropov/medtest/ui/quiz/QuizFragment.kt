@@ -1,6 +1,5 @@
 package com.dantropov.medtest.ui.quiz
 
-//import com.dantropov.medtest.ui.start.StartFragmentDirections
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,13 +42,11 @@ class QuizFragment : Fragment() {
                             fadeIn() with fadeOut()
                         }
                     ) { targetState ->
-//                        when(targetState) {
-//                            is QuizUiState.
-//                        }
-                        QuizScreen(
-                            titleId = R.string.practice,
-                            targetState
-                        )
+                        when (targetState) {
+                            is QuizUiState.Ready -> QuizScreen(R.string.practice, targetState.medQuiz)
+                            is QuizUiState.Loading -> QuizScreenLoading(R.string.practice)
+                            is QuizUiState.Empty -> QuizScreenEmpty(R.string.practice)
+                        }
                     }
                 }
             }

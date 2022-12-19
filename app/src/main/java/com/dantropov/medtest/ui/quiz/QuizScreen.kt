@@ -12,17 +12,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dantropov.medtest.R
+import com.dantropov.medtest.compose.LoadingAnimation
 import com.dantropov.medtest.database.model.Answer
 import com.dantropov.medtest.database.model.MedQuiz
 
 @Composable
-fun QuizScreen(@StringRes titleId: Int, uiState: QuizUiState) {
-    ScaffoldWithTopBar(titleId, uiState)
+fun QuizScreen(@StringRes titleId: Int, medQuiz: MedQuiz) {
+    ScaffoldWithTopBar(titleId, medQuiz)
 }
 
+@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldWithTopBar(@StringRes titleId: Int, uiState: QuizUiState) {
+fun QuizScreenEmpty(@StringRes titleId: Int = R.string.practice) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -37,12 +39,77 @@ fun ScaffoldWithTopBar(@StringRes titleId: Int, uiState: QuizUiState) {
             ),
         )
     }, content = {
-        QuizContent(it, uiState)
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.onPrimary),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                stringResource(id = R.string.quiz_error),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+    })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun QuizScreenLoading(@StringRes titleId: Int = R.string.practice) {
+    Scaffold(topBar = {
+        TopAppBar(
+            title = {
+                Text(
+                    stringResource(titleId),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceTint,
+                titleContentColor = Color.White,
+            ),
+        )
+    }, content = {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.onPrimary),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LoadingAnimation()
+        }
+    })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldWithTopBar(@StringRes titleId: Int, medQuiz: MedQuiz) {
+    Scaffold(topBar = {
+        TopAppBar(
+            title = {
+                Text(
+                    stringResource(titleId),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceTint,
+                titleContentColor = Color.White,
+            ),
+        )
+    }, content = {
+        QuizContent(it, medQuiz)
     })
 }
 
 @Composable
-private fun QuizContent(padding: PaddingValues, uiState: QuizUiState) {
+private fun QuizContent(padding: PaddingValues, medQuiz: MedQuiz) {
     Column(
         modifier = Modifier
             .padding(padding)
@@ -51,12 +118,12 @@ private fun QuizContent(padding: PaddingValues, uiState: QuizUiState) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QuizLayout(uiState)
+        QuizLayout(medQuiz)
     }
 }
 
 @Composable
-fun QuizLayout(quizUiState: QuizUiState) {
+fun QuizLayout(medQuiz: MedQuiz) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -64,7 +131,7 @@ fun QuizLayout(quizUiState: QuizUiState) {
     ) {
         Spacer(Modifier.height(16.dp))
         Text(
-            quizUiState.,
+            medQuiz.question,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(16.dp))
@@ -92,16 +159,14 @@ fun ProgressBar() {
 fun PreviewQuizScreen() {
     QuizScreen(
         titleId = R.string.practice,
-        QuizUiState.Ready(
-            MedQuiz(
-                0, "", "Текст вопроса",
-                mutableListOf(
-                    Answer("Вопрос 1", false),
-                    Answer("Вопрос 2", false),
-                    Answer("Вопрос 3", false),
-                    Answer("Вопрос 4", true),
-                    Answer("Вопрос 5", false)
-                )
+        MedQuiz(
+            0, "", "Текст вопроса",
+            mutableListOf(
+                Answer("Вопрос 1", false),
+                Answer("Вопрос 2", false),
+                Answer("Вопрос 3", false),
+                Answer("Вопрос 4", true),
+                Answer("Вопрос 5", false)
             )
         )
     )

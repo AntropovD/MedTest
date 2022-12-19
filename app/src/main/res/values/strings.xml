@@ -8,4 +8,7 @@
     <string name="exam">Экзамен</string>
     <string name="stats">Статистика</string>
 
+
+    <string name="quiz_error">Ошибка загрузки вопроса</string>
+
 </resources>

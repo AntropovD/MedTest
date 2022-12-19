@@ -2,8 +2,9 @@ package com.dantropov.medtest.compose
 
 import androidx.lifecycle.SavedStateHandle
 import com.dantropov.medtest.ui.quiz.QuizLevelData
+import javax.inject.Inject
 
-class MedSavedStateHandle(private val savedStateHandle: SavedStateHandle) {
+class MedSavedStateHandle @Inject constructor(private val savedStateHandle: SavedStateHandle) {
 
     fun saveQuizData(quizLevelData: QuizLevelData) {
         savedStateHandle[QUIZ_LEVEL_DATA] = quizLevelData
