@@ -8,6 +8,7 @@ import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.ui.quiz.QuizLevelData
 import com.dantropov.medtest.util.Constants
+import com.dantropov.medtest.util.Constants.QUIZ_LEVEL_DATA
 import com.dantropov.medtest.util.Constants.QUIZ_NAME_ID
 import com.dantropov.medtest.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,9 +35,10 @@ class StartViewModel @Inject constructor(
 
     fun navigateToExam() {
         _navigateTo.value = Event(
-            Screen.Exam, bundleOf(
+            Screen.Quiz,
+            bundleOf(
                 QUIZ_NAME_ID to R.string.exam,
-                Constants.QUIZ_LEVEL_DATA to QuizLevelData.createExamTrainingLevelData(questionsCount)
+                QUIZ_LEVEL_DATA to QuizLevelData.createExamTrainingLevelData(questionsCount)
             )
         )
     }

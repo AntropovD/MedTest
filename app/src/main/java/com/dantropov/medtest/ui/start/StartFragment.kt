@@ -25,7 +25,7 @@ class StartFragment : Fragment() {
         viewModel.init()
         viewModel.navigateTo.observe(viewLifecycleOwner) { navigateToEvent ->
             navigateToEvent.getContentIfNotHandled()?.let { navigateTo ->
-                navigate(navigateTo, Screen.Start)
+                navigate(navigateTo, Screen.Start, navigateToEvent.getBundle())
             }
         }
 

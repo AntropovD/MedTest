@@ -10,5 +10,8 @@
 
 
     <string name="quiz_error">Ошибка загрузки вопроса</string>
+    <string name="finish_title">Поздравляю!</string>
+    <string name="finish_description_format">Вы закончили текущий тест и набрали %s из %s правильных ответов</string>
+    <string name="return_to_main_screen">Вернуться на главный экран</string>
 
 </resources>

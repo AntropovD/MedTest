@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.compose.animation.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -33,11 +32,11 @@ class QuizFragment : Fragment() {
                 navigate(navigateTo, Screen.Quiz)
             }
         }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-
-            }
-        })
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//
+//            }
+//        })
         return ComposeView(requireContext()).apply {
             setContent {
                 MedTheme {
@@ -50,12 +49,16 @@ class QuizFragment : Fragment() {
                     ) { targetState ->
                         when (targetState) {
                             is QuizUiState.Ready -> QuizScreen(
-                                R.string.practice,
+                                targetState.levelNameId,
                                 targetState.medQuiz,
                                 targetState.state,
+                                targetState.quizLevelData,
                                 { answer, correctOrder, state -> viewModel.answerClick(answer, correctOrder, state) }
                             ) { viewModel.onClick(targetState.state) }
-                            is QuizUiState.Finish -> {}
+                            is QuizUiState.Finish -> QuizFinishScreen(
+                                targetState.levelNameId,
+                                targetState.quizLevelData
+                            ) { viewModel.finishClick() }
                             is QuizUiState.Loading -> QuizScreenLoading(R.string.practice)
                             is QuizUiState.Error -> QuizScreenEmpty(R.string.practice)
                         }

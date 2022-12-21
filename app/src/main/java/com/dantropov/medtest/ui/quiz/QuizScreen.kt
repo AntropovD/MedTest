@@ -29,10 +29,11 @@ fun QuizScreen(
     @StringRes titleId: Int,
     medQuiz: MedQuiz,
     state: QuestionState,
+    quizLevelData: QuizLevelData,
     onAnswerClick: (Answer, Int, QuestionState) -> Unit,
     onLayoutClick: () -> Unit
 ) {
-    ScaffoldWithTopBar(titleId, medQuiz, state, onAnswerClick, onLayoutClick)
+    ScaffoldWithTopBar(titleId, medQuiz, state, quizLevelData, onAnswerClick, onLayoutClick)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,6 +104,7 @@ fun ScaffoldWithTopBar(
     @StringRes titleId: Int,
     medQuiz: MedQuiz,
     state: QuestionState,
+    quizLevelData: QuizLevelData,
     onAnswerClick: (Answer, Int, QuestionState) -> Unit,
     onLayoutClick: () -> Unit
 ) {
@@ -119,7 +121,7 @@ fun ScaffoldWithTopBar(
             ),
         )
     }, content = {
-        QuizContent(it, medQuiz, state, onAnswerClick, onLayoutClick)
+        QuizContent(it, medQuiz, state, quizLevelData, onAnswerClick, onLayoutClick)
     })
 }
 
@@ -128,6 +130,7 @@ private fun QuizContent(
     padding: PaddingValues,
     medQuiz: MedQuiz,
     state: QuestionState,
+    quizLevelData: QuizLevelData,
     onAnswerClick: (Answer, Int, QuestionState) -> Unit,
     onLayoutClick: () -> Unit
 ) {
@@ -140,7 +143,7 @@ private fun QuizContent(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QuizLayout(medQuiz, state, onAnswerClick, onLayoutClick)
+        QuizLayout(medQuiz, state, quizLevelData, onAnswerClick, onLayoutClick)
     }
 }
 
@@ -148,6 +151,7 @@ private fun QuizContent(
 fun QuizLayout(
     medQuiz: MedQuiz,
     state: QuestionState,
+    quizLevelData: QuizLevelData,
     onAnswerClick: (Answer, Int, QuestionState) -> Unit,
     onLayoutClick: () -> Unit
 ) {
@@ -163,7 +167,7 @@ fun QuizLayout(
             medQuiz.question, style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(16.dp))
-        ProgressBar()
+        ProgressBar(quizLevelData)
         Spacer(Modifier.height(16.dp))
         QuizQuestion(medQuiz, state, onAnswerClick, onLayoutClick)
     }
@@ -241,17 +245,17 @@ fun Answer(
 }
 
 @Composable
-fun ProgressBar() {
+fun ProgressBar(quizLevelData: QuizLevelData) {
     Row() {
         LinearProgressIndicator(
             modifier = Modifier
                 .height(16.dp)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             color = MaterialTheme.colorScheme.primary,
-            progress = 0.5f
+            progress = (quizLevelData.questionPosition * 1.0f / quizLevelData.questionsCount)
         )
         Spacer(Modifier.width(4.dp))
-        Text("2/10")
+        Text("${quizLevelData.questionPosition}/ ${quizLevelData.questionsCount}")
     }
 }
 
@@ -266,9 +270,73 @@ fun PreviewQuizScreen() {
             Answer("Вопрос 4", true),
             Answer("Вопрос 5", false)
         )
-    ), QuestionState.WrongAnswer(1, 2), { _, _, _ -> }, {})
+    ), QuestionState.WrongAnswer(1, 2),
+        QuizLevelData(0, 2, 12, 6),
+        { _, _, _ -> },
+        {})
 }
 
 enum class AnswerState {
     CORRECT, WRONG, NONE
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QuizFinishScreen(levelNameId: Int, quizLevelData: QuizLevelData, onButtonClick: () -> Unit) {
+    Scaffold(topBar = {
+        TopAppBar(
+            title = {
+                Text(
+                    stringResource(levelNameId), style = MaterialTheme.typography.titleLarge
+                )
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceTint,
+                titleContentColor = Color.White,
+            ),
+        )
+    }, content = {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .padding(16.dp)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.onPrimary),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                stringResource(id = R.string.finish_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                String.format(
+                    stringResource(id = R.string.finish_description_format),
+                    quizLevelData.rightAnswersCount,
+                    quizLevelData.questionsCount
+                ),
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                modifier = Modifier
+                    .height(48.dp),
+                onClick = onButtonClick
+            ) {
+                Text(text = stringResource(id = R.string.return_to_main_screen))
+            }
+        }
+    })
+}
+
+@Preview
+@Composable
+fun FinishScreenPreview() {
+    QuizFinishScreen(
+        levelNameId = R.string.practice,
+        quizLevelData = QuizLevelData(0, 0, 10, 5)
+    ) {}
 }
