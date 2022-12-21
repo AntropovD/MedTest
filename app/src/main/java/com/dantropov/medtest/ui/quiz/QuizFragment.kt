@@ -8,7 +8,7 @@ import androidx.compose.animation.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.dantropov.medtest.R
 import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.navigation.navigate
@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class QuizFragment : Fragment() {
 
-    private val viewModel: QuizViewModel by viewModels()
+    private val viewModel: QuizViewModel by activityViewModels()
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreateView(
@@ -26,10 +26,10 @@ class QuizFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.init()
+        viewModel.init(arguments)
         viewModel.navigateTo.observe(viewLifecycleOwner) { navigateToEvent ->
             navigateToEvent.getContentIfNotHandled()?.let { navigateTo ->
-                navigate(navigateTo, Screen.Start)
+                navigate(navigateTo, Screen.Quiz)
             }
         }
         return ComposeView(requireContext()).apply {
@@ -43,9 +43,15 @@ class QuizFragment : Fragment() {
                         }
                     ) { targetState ->
                         when (targetState) {
-                            is QuizUiState.Ready -> QuizScreen(R.string.practice, targetState.medQuiz)
+                            is QuizUiState.Ready -> QuizScreen(
+                                R.string.practice,
+                                targetState.medQuiz,
+                                targetState.state,
+                             { answer, correctOrder -> viewModel.answerClick(answer, correctOrder) }
+                            ) {viewModel.onClick(targetState.state)}
+
                             is QuizUiState.Loading -> QuizScreenLoading(R.string.practice)
-                            is QuizUiState.Empty -> QuizScreenEmpty(R.string.practice)
+                            is QuizUiState.Error -> QuizScreenEmpty(R.string.practice)
                         }
                     }
                 }

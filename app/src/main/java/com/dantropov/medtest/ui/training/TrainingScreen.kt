@@ -119,7 +119,7 @@ fun TrainingListItem(data: TrainingLevelData) {
         Spacer(Modifier.height(16.dp))
         Card(
             modifier = Modifier
-                .height(40.dp)
+                .height(48.dp)
                 .fillMaxWidth()
                 .background(Color.White),
             shape = RoundedCornerShape(corner = CornerSize(8.dp))

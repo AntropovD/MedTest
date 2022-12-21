@@ -1,6 +1,8 @@
 package com.dantropov.medtest.util
 
-data class Event<out T>(private val content: T) {
+import android.os.Bundle
+
+data class Event<out T>(private val content: T, private val bundle: Bundle? = null) {
 
     var hasBeenHandled = false
         private set // Allow external read but not write
@@ -13,6 +15,8 @@ data class Event<out T>(private val content: T) {
             content
         }
     }
+
+    fun getBundle(): Bundle? = bundle
 
     fun peekContent(): T = content
 }

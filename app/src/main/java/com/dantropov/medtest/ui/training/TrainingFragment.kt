@@ -27,7 +27,7 @@ class TrainingFragment : Fragment() {
     ): View {
         viewModel.navigateTo.observe(viewLifecycleOwner) { navigateToEvent ->
             navigateToEvent.getContentIfNotHandled()?.let { navigateTo ->
-                navigate(navigateTo, Screen.Start)
+                navigate(navigateTo, Screen.Training, navigateToEvent.getBundle())
             }
         }
         return ComposeView(requireContext()).apply {

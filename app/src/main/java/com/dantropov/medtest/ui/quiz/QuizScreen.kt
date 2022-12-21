@@ -1,12 +1,16 @@
 package com.dantropov.medtest.ui.quiz
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,8 +21,14 @@ import com.dantropov.medtest.database.model.Answer
 import com.dantropov.medtest.database.model.MedQuiz
 
 @Composable
-fun QuizScreen(@StringRes titleId: Int, medQuiz: MedQuiz) {
-    ScaffoldWithTopBar(titleId, medQuiz)
+fun QuizScreen(
+    @StringRes titleId: Int,
+    medQuiz: MedQuiz,
+    state: QuestionState,
+    onAnswerClick: (Answer, Int) -> Unit,
+    onClick: () -> Unit
+) {
+    ScaffoldWithTopBar(titleId, medQuiz, state, onAnswerClick, onClick)
 }
 
 @Preview
@@ -89,7 +99,12 @@ fun QuizScreenLoading(@StringRes titleId: Int = R.string.practice) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldWithTopBar(@StringRes titleId: Int, medQuiz: MedQuiz) {
+fun ScaffoldWithTopBar(
+    @StringRes titleId: Int, medQuiz: MedQuiz,
+    state: QuestionState,
+    onAnswerClick: (Answer, Int) -> Unit,
+    onClick: () -> Unit
+) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -104,28 +119,42 @@ fun ScaffoldWithTopBar(@StringRes titleId: Int, medQuiz: MedQuiz) {
             ),
         )
     }, content = {
-        QuizContent(it, medQuiz)
+        QuizContent(it, medQuiz, state, onAnswerClick, onClick)
     })
 }
 
 @Composable
-private fun QuizContent(padding: PaddingValues, medQuiz: MedQuiz) {
+private fun QuizContent(
+    padding: PaddingValues,
+    medQuiz: MedQuiz,
+    state: QuestionState,
+    onAnswerClick: (Answer, Int) -> Unit,
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onPrimary),
+            .background(MaterialTheme.colorScheme.onPrimary)
+            .clickable { onClick },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QuizLayout(medQuiz)
+        QuizLayout(medQuiz, state, onAnswerClick, onClick)
     }
 }
 
 @Composable
-fun QuizLayout(medQuiz: MedQuiz) {
+fun QuizLayout(
+    medQuiz: MedQuiz,
+    state: QuestionState,
+    onAnswerClick: (Answer, Int) -> Unit,
+    onClick: () -> Unit
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -136,6 +165,65 @@ fun QuizLayout(medQuiz: MedQuiz) {
         )
         Spacer(Modifier.height(16.dp))
         ProgressBar()
+        Spacer(Modifier.height(16.dp))
+        QuizQuestion(medQuiz, state, onAnswerClick, onClick)
+    }
+}
+
+@Composable
+fun QuizQuestion(
+    medQuiz: MedQuiz,
+    state: QuestionState,
+    onAnswerClick: (Answer, Int) -> Unit,
+    onClick: () -> Unit
+) {
+    LazyColumn {
+        items(medQuiz.answers.size) { index ->
+            val answer = medQuiz.answers[index]
+            Spacer(Modifier.height(8.dp))
+            Answer(answer) { if (state == QuestionState.NotAnswered) onAnswerClick(answer, index) }
+        }
+    }
+
+}
+
+@Composable
+fun Answer(
+    answer: Answer,
+    selected: Boolean = false,
+    onOptionSelected: (answer: Answer) -> Unit
+) {
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        color = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (selected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.outline
+            }
+        ),
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.small)
+            .then(Modifier.clickable(onClick = { onOptionSelected(answer) }))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.width(8.dp))
+            Text(answer.text, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            Box(Modifier.padding(8.dp)) {
+                RadioButton(selected, onClick = null)
+            }
+        }
     }
 }
 
@@ -144,7 +232,7 @@ fun ProgressBar() {
     Row() {
         LinearProgressIndicator(
             modifier = Modifier
-                .height(15.dp)
+                .height(16.dp)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             color = MaterialTheme.colorScheme.primary,
             progress = 0.5f
@@ -168,6 +256,8 @@ fun PreviewQuizScreen() {
                 Answer("Вопрос 4", true),
                 Answer("Вопрос 5", false)
             )
-        )
-    )
+        ),
+        QuestionState.WrongAnswer(1, 2),
+        { _, _ -> },
+        {})
 }
