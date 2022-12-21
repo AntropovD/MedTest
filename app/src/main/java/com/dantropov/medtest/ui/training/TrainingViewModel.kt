@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dantropov.medtest.R
 import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.ui.quiz.QuizLevelData
+import com.dantropov.medtest.util.Constants
 import com.dantropov.medtest.util.Constants.QUIZ_LEVEL_DATA
 import com.dantropov.medtest.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +45,10 @@ class TrainingViewModel @Inject constructor(
     fun trainingLevelClick(trainingLevelData: TrainingLevelData) {
         _navigateTo.value = Event(
             Screen.Quiz,
-            bundleOf(QUIZ_LEVEL_DATA to QuizLevelData.createFromTrainingLevelData(trainingLevelData))
+            bundleOf(
+                Constants.QUIZ_NAME_ID to R.string.practice,
+                QUIZ_LEVEL_DATA to QuizLevelData.createFromTrainingLevelData(trainingLevelData)
+            )
         )
     }
 

@@ -74,6 +74,7 @@ dependencies {
 
     //DI
     implementation "com.google.dagger:hilt-android:$daggerVersion"
+    testImplementation 'junit:junit:4.12'
     kapt "com.google.dagger:hilt-compiler:$daggerVersion"
 
     //Room

@@ -5,19 +5,20 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.dantropov.medtest.R
 import com.dantropov.medtest.compose.base.BaseViewModel
 import com.dantropov.medtest.data.MedQuizRepository
 import com.dantropov.medtest.database.model.Answer
 import com.dantropov.medtest.database.model.MedQuiz
-import com.dantropov.medtest.navigation.Screen
 import com.dantropov.medtest.util.Constants.QUIZ_LEVEL_DATA
-import com.dantropov.medtest.util.Event
+import com.dantropov.medtest.util.Constants.QUIZ_NAME_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class QuizUiState {
-    data class Ready(val medQuiz: MedQuiz, val state: QuestionState) : QuizUiState()
+    data class Ready(val medQuiz: MedQuiz, val state: QuestionState, val levelName: Int) : QuizUiState()
     data class Finish(val quizLevelData: QuizLevelData) : QuizUiState()
     object Loading : QuizUiState()
     object Error : QuizUiState()
@@ -25,8 +26,8 @@ sealed class QuizUiState {
 
 sealed class QuestionState {
     object NotAnswered : QuestionState()
-    data class CorrectAnswer(private val correctAnswerId: Int) : QuestionState()
-    data class WrongAnswer(private val correctAnswerId: Int, private val wrongAnswerId: Int) : QuestionState()
+    data class CorrectAnswer(val correctAnswerId: Int) : QuestionState()
+    data class WrongAnswer(val correctAnswerId: Int, val wrongAnswerId: Int) : QuestionState()
 }
 
 @HiltViewModel
@@ -39,9 +40,12 @@ class QuizViewModel @Inject constructor(
 
     private var quizLevelData: QuizLevelData? = null
     private var question: MedQuiz? = null
+    private var levelNameId: Int = R.string.practice
 
     fun init(arguments: Bundle?) {
         val data = arguments?.getParcelable<QuizLevelData>(QUIZ_LEVEL_DATA)
+        levelNameId = arguments?.getInt(QUIZ_NAME_ID) ?: R.string.practice
+
         if (data == null) {
             _uiState.value = QuizUiState.Error
             return
@@ -50,19 +54,32 @@ class QuizViewModel @Inject constructor(
 
         _uiState.value = QuizUiState.Loading
         viewModelScope.launch {
-            question = medQuizRepository.getQuestion(data.currentQuestionId)
-            question?.let { _uiState.value = QuizUiState.Ready(it, QuestionState.NotAnswered) }
+            question = medQuizRepository.getQuestion(data.getCurrentQuestion())
+            question?.let { _uiState.value = QuizUiState.Ready(it, QuestionState.NotAnswered, levelNameId) }
                 ?: run { _uiState.value = QuizUiState.Error }
         }
     }
 
-    fun answerClick(answer: Answer, order: Int) {
-        question?.let { question ->
-            if (answer.correct) {
-                _uiState.value = QuizUiState.Ready(question, QuestionState.CorrectAnswer(order))
-            } else {
-                val correctOrder = question.answers.indexOfFirst { it.correct }
-                _uiState.value = QuizUiState.Ready(question, QuestionState.WrongAnswer(correctOrder, order))
+    fun answerClick(answer: Answer, order: Int, state: QuestionState) {
+        if (state != QuestionState.NotAnswered) {
+            onClick(state)
+            return
+        }
+        var state =
+            question?.let { question ->
+                if (answer.correct) QuestionState.CorrectAnswer(order)
+                else {
+                    val correctOrder = question.answers.indexOfFirst { it.correct }
+                    QuestionState.WrongAnswer(correctOrder, order)
+                }
+            }
+        state?.let { state ->
+            question?.let { medQuiz ->
+                _uiState.value = QuizUiState.Ready(medQuiz, state, levelNameId)
+                viewModelScope.launch {
+                    delay(5000)
+                    onClick(state)
+                }
             }
         }
     }
@@ -95,10 +112,7 @@ class QuizViewModel @Inject constructor(
         if (newLevelData.currentQuestionId > newLevelData.endQuestionId) {
             _uiState.value = QuizUiState.Finish(newLevelData)
         } else {
-            _navigateTo.value = Event(
-                Screen.Quiz,
-                bundleOf(QUIZ_LEVEL_DATA to newLevelData)
-            )
+            init(bundleOf(QUIZ_LEVEL_DATA to newLevelData))
         }
     }
 }

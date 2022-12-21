@@ -19,12 +19,11 @@ fun Fragment.navigate(to: Screen, from: Screen, bundle: Bundle? = null) {
         Screen.Training -> {
             findNavController().navigate(R.id.trainingFragment)
         }
+        Screen.Exam -> {
+            findNavController().navigate(R.id.trainingFragment)
+        }
         Screen.Quiz -> {
             findNavController().navigate(R.id.quizFragment, bundle)
-        }
-        Screen.Exam -> {
-            // TODO
-            findNavController().navigate(R.id.trainingFragment)
         }
     }
 }

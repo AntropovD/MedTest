@@ -1,6 +1,8 @@
 package com.dantropov.medtest.ui.quiz
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,13 +29,12 @@ fun QuizScreen(
     @StringRes titleId: Int,
     medQuiz: MedQuiz,
     state: QuestionState,
-    onAnswerClick: (Answer, Int) -> Unit,
-    onClick: () -> Unit
+    onAnswerClick: (Answer, Int, QuestionState) -> Unit,
+    onLayoutClick: () -> Unit
 ) {
-    ScaffoldWithTopBar(titleId, medQuiz, state, onAnswerClick, onClick)
+    ScaffoldWithTopBar(titleId, medQuiz, state, onAnswerClick, onLayoutClick)
 }
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreenEmpty(@StringRes titleId: Int = R.string.practice) {
@@ -39,8 +42,7 @@ fun QuizScreenEmpty(@StringRes titleId: Int = R.string.practice) {
         TopAppBar(
             title = {
                 Text(
-                    stringResource(titleId),
-                    style = MaterialTheme.typography.titleLarge
+                    stringResource(titleId), style = MaterialTheme.typography.titleLarge
                 )
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -67,15 +69,13 @@ fun QuizScreenEmpty(@StringRes titleId: Int = R.string.practice) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun QuizScreenLoading(@StringRes titleId: Int = R.string.practice) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(
-                    stringResource(titleId),
-                    style = MaterialTheme.typography.titleLarge
+                    stringResource(titleId), style = MaterialTheme.typography.titleLarge
                 )
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -100,17 +100,17 @@ fun QuizScreenLoading(@StringRes titleId: Int = R.string.practice) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldWithTopBar(
-    @StringRes titleId: Int, medQuiz: MedQuiz,
+    @StringRes titleId: Int,
+    medQuiz: MedQuiz,
     state: QuestionState,
-    onAnswerClick: (Answer, Int) -> Unit,
-    onClick: () -> Unit
+    onAnswerClick: (Answer, Int, QuestionState) -> Unit,
+    onLayoutClick: () -> Unit
 ) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(
-                    stringResource(titleId),
-                    style = MaterialTheme.typography.titleLarge
+                    stringResource(titleId), style = MaterialTheme.typography.titleLarge
                 )
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -119,7 +119,7 @@ fun ScaffoldWithTopBar(
             ),
         )
     }, content = {
-        QuizContent(it, medQuiz, state, onAnswerClick, onClick)
+        QuizContent(it, medQuiz, state, onAnswerClick, onLayoutClick)
     })
 }
 
@@ -128,19 +128,19 @@ private fun QuizContent(
     padding: PaddingValues,
     medQuiz: MedQuiz,
     state: QuestionState,
-    onAnswerClick: (Answer, Int) -> Unit,
-    onClick: () -> Unit
+    onAnswerClick: (Answer, Int, QuestionState) -> Unit,
+    onLayoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.onPrimary)
-            .clickable { onClick },
+            .clickable(onClick = onLayoutClick),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QuizLayout(medQuiz, state, onAnswerClick, onClick)
+        QuizLayout(medQuiz, state, onAnswerClick, onLayoutClick)
     }
 }
 
@@ -148,8 +148,8 @@ private fun QuizContent(
 fun QuizLayout(
     medQuiz: MedQuiz,
     state: QuestionState,
-    onAnswerClick: (Answer, Int) -> Unit,
-    onClick: () -> Unit
+    onAnswerClick: (Answer, Int, QuestionState) -> Unit,
+    onLayoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -160,28 +160,35 @@ fun QuizLayout(
     ) {
         Spacer(Modifier.height(16.dp))
         Text(
-            medQuiz.question,
-            style = MaterialTheme.typography.bodyLarge
+            medQuiz.question, style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(16.dp))
         ProgressBar()
         Spacer(Modifier.height(16.dp))
-        QuizQuestion(medQuiz, state, onAnswerClick, onClick)
+        QuizQuestion(medQuiz, state, onAnswerClick, onLayoutClick)
     }
 }
 
 @Composable
 fun QuizQuestion(
-    medQuiz: MedQuiz,
-    state: QuestionState,
-    onAnswerClick: (Answer, Int) -> Unit,
-    onClick: () -> Unit
+    medQuiz: MedQuiz, state: QuestionState, onAnswerClick: (Answer, Int, QuestionState) -> Unit, onClick: () -> Unit
 ) {
+    var correctAnswerId = -1
+    var wrongAnswerId = -1
+    if (state is QuestionState.CorrectAnswer) correctAnswerId = state.correctAnswerId
+    if (state is QuestionState.WrongAnswer) {
+        correctAnswerId = state.correctAnswerId
+        wrongAnswerId = state.wrongAnswerId
+    }
     LazyColumn {
         items(medQuiz.answers.size) { index ->
             val answer = medQuiz.answers[index]
             Spacer(Modifier.height(8.dp))
-            Answer(answer) { if (state == QuestionState.NotAnswered) onAnswerClick(answer, index) }
+            when (index) {
+                wrongAnswerId -> Answer(answer, AnswerState.WRONG) { onAnswerClick(answer, index, state) }
+                correctAnswerId -> Answer(answer, AnswerState.CORRECT) { onAnswerClick(answer, index, state) }
+                else -> Answer(answer, AnswerState.NONE) { onAnswerClick(answer, index, state) }
+            }
         }
     }
 
@@ -189,25 +196,31 @@ fun QuizQuestion(
 
 @Composable
 fun Answer(
-    answer: Answer,
-    selected: Boolean = false,
-    onOptionSelected: (answer: Answer) -> Unit
+    answer: Answer, state: AnswerState, onOptionSelected: (answer: Answer) -> Unit
 ) {
+    val backgroundColor = Color(0xFFEEDCFF)
+    var animatedColor = remember { Animatable(Color(0xFFEEDCFF)) }
+
+    when (state) {
+        AnswerState.CORRECT -> {
+            val accentColor = Color(0xFF4CAF50)
+            LaunchedEffect(Unit) {
+                animatedColor.animateTo(accentColor, animationSpec = tween(500))
+                animatedColor.animateTo(backgroundColor, animationSpec = tween(500))
+                animatedColor.animateTo(accentColor, animationSpec = tween(500))
+                animatedColor.animateTo(backgroundColor, animationSpec = tween(500))
+                animatedColor.animateTo(accentColor, animationSpec = tween(500))
+            }
+        }
+        AnswerState.WRONG -> animatedColor = remember { Animatable(Color(0xFFF44336)) }
+        AnswerState.NONE -> {}
+    }
+
+
     Surface(
         shape = MaterialTheme.shapes.small,
-        color = if (selected) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surface
-        },
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (selected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.outline
-            }
-        ),
+        color = animatedColor.value,
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
         modifier = Modifier
             .clip(MaterialTheme.shapes.small)
             .then(Modifier.clickable(onClick = { onOptionSelected(answer) }))
@@ -221,7 +234,7 @@ fun Answer(
             Spacer(Modifier.width(8.dp))
             Text(answer.text, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Box(Modifier.padding(8.dp)) {
-                RadioButton(selected, onClick = null)
+                RadioButton(state == AnswerState.CORRECT, onClick = null)
             }
         }
     }
@@ -245,19 +258,17 @@ fun ProgressBar() {
 @Preview
 @Composable
 fun PreviewQuizScreen() {
-    QuizScreen(
-        titleId = R.string.practice,
-        MedQuiz(
-            0, "", "Текст вопроса",
-            mutableListOf(
-                Answer("Вопрос 1", false),
-                Answer("Вопрос 2", false),
-                Answer("Вопрос 3", false),
-                Answer("Вопрос 4", true),
-                Answer("Вопрос 5", false)
-            )
-        ),
-        QuestionState.WrongAnswer(1, 2),
-        { _, _ -> },
-        {})
+    QuizScreen(titleId = R.string.practice, MedQuiz(
+        0, "", "Текст вопроса", mutableListOf(
+            Answer("Вопрос 1", false),
+            Answer("Вопрос 2", false),
+            Answer("Вопрос 3", false),
+            Answer("Вопрос 4", true),
+            Answer("Вопрос 5", false)
+        )
+    ), QuestionState.WrongAnswer(1, 2), { _, _, _ -> }, {})
+}
+
+enum class AnswerState {
+    CORRECT, WRONG, NONE
 }
